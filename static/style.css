@@ -1,0 +1,10 @@
+.results-container {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.loading {
+  display: none;
+  padding: 20px;
+  text-align: center;
+}

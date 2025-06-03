@@ -1,0 +1,117 @@
+
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[romanian]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{color}
+\usepackage{longtable}
+\geometry{margin=1in}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+
+\title{\textbf{Problema 196 și Numerele Lychrel: Descoperiri, Date și Analize}}
+\author{Studiu realizat cu ajutorul ChatGPT}
+\date{\today}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\thepage}
+\lhead{Analiza numerelor Lychrel}
+
+\begin{document}
+\maketitle
+
+\section{Introducere}
+Un \textbf{număr palindromic} este un număr care se citește la fel de la stânga la dreapta și invers (ex. 12321). Mulți întregi devin palindromici după pași succesivi de \emph{inversare și adunare}. Totuși, există unele numere care nu par să ajungă niciodată la o formă palindromică — acestea sunt numite \textbf{numere Lychrel}.
+
+Cel mai faimos candidat este \textbf{196}, care nu a generat niciodată un palindrom în milioane de iterări. Acest document explorează descoperirile matematice și experimentale legate de problema 196 și numerele Lychrel, cu accent pe analiză pe scară largă și propuneri de îmbunătățire a algoritmilor existenți.
+
+\section{Context teoretic și descoperiri cunoscute}
+\subsection{Definiția problemei}
+\begin{itemize}
+    \item Se pornește cu un număr $n$.
+    \item Se calculează suma $n + reverse(n)$.
+    \item Se repetă procesul până când se obține un palindrom sau până când se decide că numărul este un candidat Lychrel.
+\end{itemize}
+
+\subsection{Numărul 196}
+Numărul 196 a fost testat în milioane de iterații fără ca vreodată să ajungă la un palindrom. De aceea, este considerat cel mai puternic candidat Lychrel cunoscut în baza 10.
+
+\subsection{Candidaturi Lychrel cunoscute}
+S-au identificat numeroase numere care par să nu genereze palindroame, inclusiv: 196, 295, 394, 879, 1997, 7059. Acestea sunt împărțite în:
+\begin{itemize}
+    \item \textbf{Semințe (seeds)} — cele mai mici numere care generează un fir unic de iterații nepalindromice.
+    \item \textbf{Afini (kin)} — numere care se unesc pe parcurs cu o secvență deja cunoscută.
+\end{itemize}
+
+\section{Eforturi de căutare pe scară largă}
+\subsection{Istoric și praguri atinse}
+\begin{itemize}
+    \item John Walker a ajuns la 1 milion de cifre în anii ’90.
+    \item Romain Dolbeau a depășit 1 miliard de cifre în 2015.
+    \item Alți candidați (879, 1997) s-au dovedit la fel de rezistenți.
+\end{itemize}
+
+\subsection{Tehnici utilizate}
+\begin{itemize}
+    \item \textbf{Brute-force} cu aritmetică pe numere mari.
+    \item \textbf{Distribuție pe fire/paralelizare}.
+    \item Recunoaștere a convergenței către fire deja cunoscute.
+\end{itemize}
+
+\section{Modele și atracții comune}
+\subsection{Palindroame recurente}
+Mai multe numere diferite pot converge către același palindrom. Exemplu: 8813200023188 este atins de 89, 98, 187 etc.
+
+\subsection{Numere cu întârziere mare}
+\begin{itemize}
+    \item 89 → 24 pași până la 8813200023188.
+    \item 10911 → 55 pași.
+    \item Recorduri recente depășesc 293 de pași.
+\end{itemize}
+
+\section{Surse de date și comunități}
+\begin{itemize}
+    \item \textbf{P196.org} — Wade VanLandingham: listă completă de semințe.
+    \item \textbf{OEIS} — secvențe relevante ca A281506.
+    \item \textbf{Project Euler Problem 55} — problemă populară de programare.
+    \item \textbf{Reddit, StackExchange} — observații și discuții despre modele.
+\end{itemize}
+
+\section{Sugestii pentru îmbunătățirea uneltei actuale}
+\subsection{Optimizări algoritmice}
+\begin{itemize}
+    \item \textbf{Memoizare} pentru fire deja procesate.
+    \item \textbf{Adunare fără conversie string} pentru viteză.
+    \item \textbf{Paralelizare cu multiprocessing} sau distribuție.
+\end{itemize}
+
+\subsection{Schema bazei de date}
+Adăugarea câmpurilor:
+\begin{itemize}
+    \item ID palindrom.
+    \item ID fir.
+\end{itemize}
+
+\subsection{Vizualizări propuse}
+\begin{itemize}
+    \item Histogramă cu numărul de pași.
+    \item Graf de trasee (reverse \& add).
+    \item Heatmap pentru distribuția cifrelor.
+\end{itemize}
+
+\subsection{Abordări ML}
+\begin{itemize}
+    \item \textbf{Clustering} pe vectori de trăsături (sumă cifre, număr cifre etc.).
+    \item \textbf{Clasificator binar} (rezolvă / nu în X pași).
+\end{itemize}
+
+\section{Concluzie}
+Problema 196 continuă să fascineze prin simplitate și profunzime. Deși nu există o dovadă teoretică pentru existența numerelor Lychrel, datele computaționale oferă indicii puternice. Cu instrumente optimizate și vizualizări mai bune, putem explora noi regiuni și poate descoperi o structură ascunsă ce deschide calea spre demonstrarea unei conjecturi vechi.
+
+\end{document}

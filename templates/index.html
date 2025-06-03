@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lychrel Numbers Calculator</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .results-container {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      .loading {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="mb-4">Lychrel Numbers Calculator</h1>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <form id="calculatorForm">
+            <div class="row">
+              <div class="col-md-5">
+                <div class="form-group">
+                  <label for="start">Start Number:</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="start"
+                    name="start"
+                    required
+                    min="1"
+                  />
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="form-group">
+                  <label for="end">End Number:</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="end"
+                    name="end"
+                    required
+                    min="1"
+                  />
+                </div>
+              </div>
+              <div class="col-md-2 d-flex align-items-end">
+                <button
+                  type="submit"
+                  class="btn btn-primary w-100"
+                  style="background-color: black"
+                >
+                  Calculate
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="loading text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Calculating... Please wait</p>
+      </div>
+
+      <div class="results" style="display: none">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Statistics</h5>
+                <p>Total Numbers: <span id="totalNumbers">0</span></p>
+                <p>Found Palindromes: <span id="totalPalindromes">0</span></p>
+                <p>
+                  Possible Lychrel Numbers: <span id="totalLychrel">0</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-8">
+            <ul class="nav nav-tabs" id="resultTabs" role="tablist">
+              <li class="nav-item">
+                <a
+                  class="nav-link active"
+                  id="palindromes-tab"
+                  data-bs-toggle="tab"
+                  href="#palindromes"
+                  role="tab"
+                  >Palindromes</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link"
+                  id="lychrel-tab"
+                  data-bs-toggle="tab"
+                  href="#lychrel"
+                  role="tab"
+                  >Possible Lychrel Numbers</a
+                >
+              </li>
+            </ul>
+
+            <div class="tab-content mt-3">
+              <div
+                class="tab-pane fade show active"
+                id="palindromes"
+                role="tabpanel"
+              >
+                <div class="results-container">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Initial Number</th>
+                        <th>Steps</th>
+                        <th>Final Palindrome</th>
+                      </tr>
+                    </thead>
+                    <tbody id="palindromesTable"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="tab-pane fade" id="lychrel" role="tabpanel">
+                <div class="results-container">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Number</th>
+                        <th>Steps Tried</th>
+                      </tr>
+                    </thead>
+                    <tbody id="lychrelTable"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mt-4">
+      <div class="card-body">
+        <h5 class="card-title">Numbers Collapsing to Same Palindrome</h5>
+        <div class="results-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Final Palindrome</th>
+                <th>Count</th>
+                <th>Initial Numbers (Steps)</th>
+              </tr>
+            </thead>
+            <tbody id="groupedPalindromes"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document
+        .getElementById("calculatorForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const loading = document.querySelector(".loading");
+          const results = document.querySelector(".results");
+
+          loading.style.display = "block";
+          results.style.display = "none";
+
+          const formData = new FormData(e.target);
+
+          try {
+            const response = await fetch("/calculate", {
+              method: "POST",
+              body: formData,
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+              alert(data.error);
+              return;
+            }
+
+            // Update statistics
+            document.getElementById("totalNumbers").textContent =
+              data.total_numbers;
+            document.getElementById("totalPalindromes").textContent =
+              data.total_palindromes;
+            document.getElementById("totalLychrel").textContent =
+              data.total_lychrel;
+
+            // Update palindromes table
+            const palindromesTable =
+              document.getElementById("palindromesTable");
+            palindromesTable.innerHTML = "";
+            data.palindromes.forEach((p) => {
+              palindromesTable.innerHTML += `
+                    <tr>
+                        <td>${p.initial_number}</td>
+                        <td>${p.steps}</td>
+                        <td>${p.palindrome}</td>
+                    </tr>
+                `;
+            });
+
+            // Update Lychrel numbers table
+            const lychrelTable = document.getElementById("lychrelTable");
+            lychrelTable.innerHTML = "";
+            data.lychrel_numbers.forEach((l) => {
+              lychrelTable.innerHTML += `
+                        <tr>
+                            <td>${l.number}</td>
+                            <td>${l.steps}</td>
+                        </tr>
+                    `;
+            });
+
+            // Update grouped palindromes table
+            const groupedTable = document.getElementById("groupedPalindromes");
+            groupedTable.innerHTML = "";
+
+            // Convert object to array and sort by number of elements in descending order
+            const sortedGroups = Object.entries(data.palindrome_groups).sort(
+              (a, b) => b[1].length - a[1].length
+            );
+
+            sortedGroups.forEach(([palindrome, numbers]) => {
+              const numbersText = numbers
+                .map((n) => `${n.initial_number} (${n.steps} steps)`)
+                .join(", ");
+
+              groupedTable.innerHTML += `
+                    <tr>
+                        <td>${palindrome}</td>
+                        <td>${numbers.length}</td>
+                        <td>${numbersText}</td>
+                    </tr>
+                `;
+            });
+
+            results.style.display = "block";
+          } catch (error) {
+            alert("An error occurred while calculating");
+            console.error(error);
+          } finally {
+            loading.style.display = "none";
+          }
+        });
+    </script>
+  </body>
+</html>
